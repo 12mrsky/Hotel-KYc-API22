@@ -127,14 +127,12 @@ namespace Hotel_KYC_Api.Controllers
 
             try
             {
-                var user = new User
-                {
-                    FullName = request.FullName,
-                    Email = request.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password), // ✅ already correct
-                    PhoneNumber = request.PhoneNumber,
-                    CreatedAt = DateTime.Now
-                };
+            var user = new User
+{
+    FullName = request.FullName,
+    Email = request.Email,
+    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
+};
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
