@@ -25,7 +25,8 @@ builder.Services.AddCors(options =>
 // 4. Add Database Context (FIXED)
 // This links your AppDbContext class to the ConnectionString in appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
