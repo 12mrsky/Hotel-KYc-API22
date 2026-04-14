@@ -15,37 +15,40 @@ namespace Hotel_KYC_Api.Models
         public virtual HotelRegistration? Hotel { get; set; }
 
         [Required]
-        public string RoomNumber { get; set; }
+        public string RoomNumber { get; set; } = string.Empty;
 
         [Required]
-        public string GuestName { get; set; }
+        public string GuestName { get; set; } = string.Empty;
 
-        public string CheckInTime { get; set; }
-        public string CheckOutTime { get; set; }
+        public string? CheckInTime { get; set; }
+        public string? CheckOutTime { get; set; }
 
         public int Adults { get; set; } = 1;
         public int Kids { get; set; } = 0;
 
         [Required]
         [StringLength(12, MinimumLength = 12, ErrorMessage = "Aadhaar must be 12 digits.")]
-        public string AadhaarNumber { get; set; }
+        public string AadhaarNumber { get; set; } = string.Empty;
 
         public int Age { get; set; }
 
         [Required]
-        public string MobileNumber { get; set; }
+        public string MobileNumber { get; set; } = string.Empty;
 
-        public string Address { get; set; }
-        public string ComingFrom { get; set; }
-        public string GoingTo { get; set; }
+        public string? Address { get; set; }
+        public string? ComingFrom { get; set; }
+        public string? GoingTo { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public bool IsFlagged { get; set; } = false; // BIT maps to bool
+        // 🔥 FIX: Use UTC time (important for PostgreSQL)
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsFlagged { get; set; } = false;
+
         public string? PoliceRemarks { get; set; }
+
         public string Status { get; set; } = "Checked-In";
     }
 }
-
 //using System.ComponentModel.DataAnnotations;
 
 //namespace Hotel_KYC_Api.Models
