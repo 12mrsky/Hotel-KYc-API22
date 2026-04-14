@@ -20,8 +20,8 @@ namespace Hotel_KYC_Api.Models
         [Required]
         public string GuestName { get; set; } = string.Empty;
 
-        public string? CheckInTime { get; set; }
-        public string? CheckOutTime { get; set; }
+        public DateTime? CheckInTime { get; set; }
+        public DateTime? CheckOutTime { get; set; }
 
         public int Adults { get; set; } = 1;
         public int Kids { get; set; } = 0;
@@ -39,7 +39,7 @@ namespace Hotel_KYC_Api.Models
         public string? ComingFrom { get; set; }
         public string? GoingTo { get; set; }
 
-        // 🔥 FIX: Use UTC time (important for PostgreSQL)
+        // FIX: Use UTC time (important for PostgreSQL)
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public bool IsFlagged { get; set; } = false;

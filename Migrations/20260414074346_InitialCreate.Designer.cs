@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hotel_KYC_Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260414071631_InitialCreate")]
+    [Migration("20260414074346_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,7 +39,6 @@ namespace Hotel_KYC_Api.Migrations
                         .HasColumnType("character varying(12)");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Adults")
@@ -49,22 +48,18 @@ namespace Hotel_KYC_Api.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("CheckInTime")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CheckOutTime")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ComingFrom")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("GoingTo")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("GuestName")
@@ -118,7 +113,6 @@ namespace Hotel_KYC_Api.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("GSTNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("HotelName")
@@ -162,11 +156,9 @@ namespace Hotel_KYC_Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("UserId");

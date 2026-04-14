@@ -20,7 +20,7 @@ namespace Hotel_KYC_Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     HotelName = table.Column<string>(type: "text", nullable: false),
                     OwnerName = table.Column<string>(type: "text", nullable: false),
-                    GSTNumber = table.Column<string>(type: "text", nullable: false),
+                    GSTNumber = table.Column<string>(type: "text", nullable: true),
                     MobileNumber = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -39,9 +39,9 @@ namespace Hotel_KYC_Api.Migrations
                     FullName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Role = table.Column<string>(type: "text", nullable: false)
+                    Role = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -57,16 +57,16 @@ namespace Hotel_KYC_Api.Migrations
                     HotelId = table.Column<int>(type: "integer", nullable: false),
                     RoomNumber = table.Column<string>(type: "text", nullable: false),
                     GuestName = table.Column<string>(type: "text", nullable: false),
-                    CheckInTime = table.Column<string>(type: "text", nullable: false),
-                    CheckOutTime = table.Column<string>(type: "text", nullable: false),
+                    CheckInTime = table.Column<string>(type: "text", nullable: true),
+                    CheckOutTime = table.Column<string>(type: "text", nullable: true),
                     Adults = table.Column<int>(type: "integer", nullable: false),
                     Kids = table.Column<int>(type: "integer", nullable: false),
                     AadhaarNumber = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
                     MobileNumber = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    ComingFrom = table.Column<string>(type: "text", nullable: false),
-                    GoingTo = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    ComingFrom = table.Column<string>(type: "text", nullable: true),
+                    GoingTo = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsFlagged = table.Column<bool>(type: "boolean", nullable: false),
                     PoliceRemarks = table.Column<string>(type: "text", nullable: true),
