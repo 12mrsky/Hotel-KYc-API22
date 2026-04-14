@@ -60,20 +60,18 @@ namespace Hotel_KYC_Api.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        // 🔐 Stored hashed password only
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
         public string? PhoneNumber { get; set; }
 
-        // ✅ UTC (PostgreSQL safe)
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // ✅ Role for login navigation
-        public string? Role { get; set; } = "Hotel";
+        // 🔥 IMPORTANT: Role from frontend
+        public string? Role { get; set; } = "User";
     }
 
-    // ✅ DTO (IMPORTANT – used in register API)
+    // ✅ UPDATED DTO (ADD ROLE HERE)
     public class RegisterRequest
     {
         [Required]
@@ -88,5 +86,8 @@ namespace Hotel_KYC_Api.Models
         public string Password { get; set; } = string.Empty;
 
         public string? PhoneNumber { get; set; }
+
+        // 🔥 ADD THIS (MOST IMPORTANT)
+        public string Role { get; set; } = "User";
     }
 }

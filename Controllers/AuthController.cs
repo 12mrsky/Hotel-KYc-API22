@@ -216,7 +216,7 @@ namespace Hotel_KYC_Api.Controllers
             _context = context;
         }
 
-        // ✅ REGISTER (FIXED)
+        // ✅ REGISTER (ROLE FIXED)
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
@@ -238,13 +238,12 @@ namespace Hotel_KYC_Api.Controllers
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
 
-                // 🔐 HASH PASSWORD
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
 
                 CreatedAt = DateTime.UtcNow,
 
-                // 🔥 DEFAULT ROLE
-                Role = "Hotel"
+                // 🔥 USE ROLE FROM FRONTEND
+                Role = request.Role
             };
 
             _context.Users.Add(user);
@@ -258,7 +257,7 @@ namespace Hotel_KYC_Api.Controllers
             });
         }
 
-        // ✅ LOGIN (ROLE BASED)
+        // ✅ LOGIN (ROLE RETURN FIXED)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
@@ -274,12 +273,11 @@ namespace Hotel_KYC_Api.Controllers
                 userId = user.UserId,
                 fullName = user.FullName,
                 email = user.Email,
-                role = user.Role ?? "Hotel"
+                role = user.Role // 🔥 IMPORTANT
             });
         }
     }
 
-    // ✅ LOGIN DTO
     public class LoginDto
     {
         public string Email { get; set; } = "";
