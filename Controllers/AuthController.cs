@@ -95,6 +95,109 @@
 //     }
 // }
 
+// using Hotel_KYC_Api.Data;
+// using Hotel_KYC_Api.Models;
+// using Microsoft.AspNetCore.Mvc;
+// using Microsoft.EntityFrameworkCore;
+
+// namespace Hotel_KYC_Api.Controllers
+// {
+//     [ApiController]
+//     [Route("api/[controller]")]
+//     public class AuthController : ControllerBase
+//     {
+//         private readonly AppDbContext _context;
+
+//         public AuthController(AppDbContext context)
+//         {
+//             _context = context;
+//         }
+
+//         // ================= REGISTER =================
+//         [HttpPost("register")]
+//         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+//         {
+//             // ✅ Check if email exists (case-insensitive)
+//             var existingUser = await _context.Users
+//                 .AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
+
+//             if (existingUser)
+//             {
+//                 return BadRequest(new { message = "Email is already registered." });
+//             }
+
+//             try
+//             {
+//                 var user = new User
+//                 {
+//                     FullName = request.FullName,
+//                     Email = request.Email,
+//                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+//                     PhoneNumber = request.PhoneNumber,
+
+//                     // 🔥 FIX: Use UTC for PostgreSQL
+//                     CreatedAt = DateTime.UtcNow,
+
+//                     // 🔥 IMPORTANT: default role (if not provided)
+//                     Role = "Hotel"
+//                 };
+
+//                 _context.Users.Add(user);
+//                 await _context.SaveChangesAsync();
+
+//                 return Ok(new
+//                 {
+//                     message = "User registered successfully",
+//                     userId = user.UserId
+//                 });
+//             }
+//             catch (Exception ex)
+//             {
+//                 return StatusCode(500, new
+//                 {
+//                     message = "Database error",
+//                     details = ex.InnerException?.Message ?? ex.Message
+//                 });
+//             }
+//         }
+
+//         // ================= LOGIN =================
+//         [HttpPost("login")]
+//         public async Task<IActionResult> Login([FromBody] LoginRequest request)
+//         {
+//             // ✅ Case-insensitive username search
+//             var user = await _context.Users
+//                 .FirstOrDefaultAsync(u => u.FullName.ToLower() == request.FullName.ToLower());
+
+//             // ❌ Invalid login
+//             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+//             {
+//                 return Unauthorized(new { message = "Invalid Username or Password" });
+//             }
+
+//             // ✅ Return role-based data
+//             return Ok(new
+//             {
+//                 message = "Login successful",
+//                 userId = user.UserId,
+//                 fullName = user.FullName,
+//                 email = user.Email,
+
+//                 // 🔥 IMPORTANT (fallback safety)
+//                 role = user.Role ?? "Hotel"
+//             });
+//         }
+
+//         // ================= LOGIN REQUEST MODEL =================
+//         public class LoginRequest
+//         {
+//             public string FullName { get; set; } = string.Empty;
+//             public string Password { get; set; } = string.Empty;
+//         }
+//     }
+// }
+
+// MY OLD codes
 using Hotel_KYC_Api.Data;
 using Hotel_KYC_Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -113,71 +216,73 @@ namespace Hotel_KYC_Api.Controllers
             _context = context;
         }
 
+        // ✅ REGISTER (FIXED)
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var existingUser = await _context.Users
+            if (request == null)
+                return BadRequest("Invalid data");
+
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Email and Password are required");
+
+            var exists = await _context.Users
                 .AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
 
-            if (existingUser)
-            {
-                return BadRequest(new { message = "Email is already registered." });
-            }
+            if (exists)
+                return BadRequest("User already exists");
 
-            try
+            var user = new User
             {
-                var user = new User
-                {
-                    FullName = request.FullName,
-                    Email = request.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
-                    // ❌ REMOVED: PhoneNumber, CreatedAt
-                };
+                FullName = request.FullName,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                // 🔐 HASH PASSWORD
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
 
-                return Ok(new
-                {
-                    message = "User registered successfully",
-                    userId = user.UserId
-                });
-            }
-            catch (Exception ex)
+                CreatedAt = DateTime.UtcNow,
+
+                // 🔥 DEFAULT ROLE
+                Role = "Hotel"
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
             {
-                return BadRequest(new
-                {
-                    message = "Database error",
-                    error = ex.InnerException?.Message ?? ex.Message
-                });
-            }
+                message = "User registered successfully",
+                user.Email,
+                user.Role
+            });
         }
 
+        // ✅ LOGIN (ROLE BASED)
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.FullName.ToLower() == request.FullName.ToLower());
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == login.Email.ToLower());
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            {
-                return Unauthorized(new { message = "Invalid Username or Password" });
-            }
+            if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.PasswordHash))
+                return Unauthorized(new { message = "Invalid email or password" });
 
             return Ok(new
             {
                 message = "Login successful",
                 userId = user.UserId,
                 fullName = user.FullName,
-                email = user.Email
-                // ❌ REMOVED: role
+                email = user.Email,
+                role = user.Role ?? "Hotel"
             });
         }
+    }
 
-        public class LoginRequest
-        {
-            public string FullName { get; set; }
-            public string Password { get; set; }
-        }
+    // ✅ LOGIN DTO
+    public class LoginDto
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }
