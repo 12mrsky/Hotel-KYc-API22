@@ -116,7 +116,6 @@ namespace Hotel_KYC_Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            // ✅ Check if email exists
             var existingUser = await _context.Users
                 .AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
 
@@ -131,9 +130,8 @@ namespace Hotel_KYC_Api.Controllers
                 {
                     FullName = request.FullName,
                     Email = request.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password), // ✅ already correct
-                    PhoneNumber = request.PhoneNumber,
-                    CreatedAt = DateTime.Now
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
+                    // ❌ REMOVED: PhoneNumber, CreatedAt
                 };
 
                 _context.Users.Add(user);
@@ -147,7 +145,6 @@ namespace Hotel_KYC_Api.Controllers
             }
             catch (Exception ex)
             {
-                // ✅ IMPORTANT: show real DB error
                 return BadRequest(new
                 {
                     message = "Database error",
@@ -159,7 +156,6 @@ namespace Hotel_KYC_Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // ✅ Case-insensitive search
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.FullName.ToLower() == request.FullName.ToLower());
 
@@ -173,8 +169,8 @@ namespace Hotel_KYC_Api.Controllers
                 message = "Login successful",
                 userId = user.UserId,
                 fullName = user.FullName,
-                email = user.Email,
-                role = user.Role
+                email = user.Email
+                // ❌ REMOVED: role
             });
         }
 
